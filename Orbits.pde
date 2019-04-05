@@ -21,7 +21,7 @@ PImage surftex1;
 
 void setup() {
   Locale.setDefault(new Locale("en", "US"));   
-  frameRate(30);
+  frameRate(60);
   size(720, 720, P3D); 
   cam = new PeasyCam(this, 0, 0, 0, 2000);
   cam.setMinimumDistance(40);
