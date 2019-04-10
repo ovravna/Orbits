@@ -10,18 +10,20 @@ Planet p1, p2;
 
 Physics p;
 God God;
-boolean drawAxis = false;
+boolean drawAxis = true;
 boolean drawLine = true; 
+boolean stopTime = false;
+boolean frameBound = false;
 
 PShape sun_;
 PImage suntex;
 
 PShape planet1;
 PImage surftex1;
-
+int fps = 60;
 void setup() {
   Locale.setDefault(new Locale("en", "US"));   
-  frameRate(60);
+  frameRate(fps);
   size(720, 720, P3D); 
   cam = new PeasyCam(this, 0, 0, 0, 2000);
   cam.setMinimumDistance(40);
@@ -71,17 +73,32 @@ PVector circularV(float x, float y, float z, float r, Planet o) {
 void mouseClicked() {
   
   God.toggleDrawLines();
-  
-  //cam = new PeasyCam(this, sun.pos.x, sun.pos.y, sun.pos.y , 400);
+ 
 }
-
+long lastPressed = 0;
 void keyPressed() {
-  if (key == ' ' || (key == CODED && keyCode == DOWN)) { 
+
+  if (key == CODED && keyCode == DOWN) { 
     God.changeView(1);
   }
   if (key == CODED && keyCode == UP) {
     God.changeView(-1);
   }
+  
+  if (key == ' ') {
+    stopTime = !stopTime;
+  }
+  
+  if (key == CODED && keyCode == RIGHT) { 
+    fps += 10;
+    frameRate(fps);
+  }
+  if (key == CODED && keyCode == LEFT) {
+    if (fps < 11) return;
+    fps -= 10;
+    frameRate(fps);
+  }
+  
   float l = 0.1;
   if (key == 'w') { 
     cam.rotateX(l);
@@ -123,23 +140,58 @@ void keyPressed() {
   if (key == 'x') { 
     cam.setDistance(cam.getDistance()*0.9);
   }
+  
+  if (key == 'f') { 
+    frameBound = !frameBound;
+  }
+  
+  if (stopTime) {
+    if (key == 'n') { 
+        God.undoPhysics(); 
+
+    }
+    if (key == 'm') { 
+      
+      God.doPhysics();
+    }
+  }
 }
 
 
+float F = 60.0;
+float sumFrameScore = 0;
 void draw() {
   background(0);
  
   //sphereDetail(14);
   
   if (drawAxis) {
-    float axlen = 1000;
+    float axlen = (float) cam.getDistance();
+    pushMatrix();
+    translate(God.viewPlanet.pos.x, God.viewPlanet.pos.y, God.viewPlanet.pos.z);
     line(0, -axlen, 0, 0, axlen, 0); 
     line(-axlen, 0, 0, axlen, 0, 0); 
     line(0, 0, -axlen, 0, 0, axlen); 
+    
+    popMatrix();
   }
- 
-  God.doPhysics();
   
+  if (stopTime) {
+    
+  } else if (frameBound) {
+    God.doPhysics();
+  } else {
+    float frameScore = F / frameRate; 
+    
+    sumFrameScore += frameScore;
+   
+    while (sumFrameScore > 1) {
+    
+      God.doPhysics();
+      sumFrameScore--;
+    }
+  
+  }
   God.show();
 
 }

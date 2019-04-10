@@ -44,7 +44,39 @@ class God {
         pl.drawLine = drawLine;
     }
   }
-  
+
+  void undoPhysics() {
+    int i = -2;
+    
+    for (Planet p: planets) {
+      
+      int last = p.line.size() - 1;
+      if (last < 2) continue;
+      PVector newPos = p.line.get(last - 1);
+      PVector newForce = p.force.copy(); 
+      PVector oldForce = p.force.copy();
+
+      
+      
+      PVector p2 = p.line.get(last);
+      PVector p1 = p.line.get(last - 1);
+     
+      PVector f = p2.sub(p1);
+       
+     
+      PVector f0 = oldForce.copy().sub(f);
+       
+      PVector n = newForce.copy().sub(f0); 
+      
+      p.line.remove(last);
+      p.line.remove(last - 1);
+      p.line.add(newPos.copy());
+      
+      p.force = n;
+      p.pos = newPos;
+    }
+    
+  }
   void doPhysics() {
     
     for (Planet pl : planets) {

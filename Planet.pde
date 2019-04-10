@@ -2,7 +2,7 @@
 
 class Planet {
   int index;
-  int lineSize;
+
   float r, m;
   PVector pos;
   ArrayList<PVector> line;
@@ -24,7 +24,7 @@ class Planet {
     this.pos = initPos;
     line = new ArrayList<PVector>();
     line.add(initPos);
-    lineSize = 1;
+    
     force = initForce; 
     resetFrame();
     
@@ -36,7 +36,7 @@ class Planet {
   void move(float x, float y, float z) {
     pos = new PVector(x, y, z);
     line.add(pos);
-    lineSize += 1;
+  
   }
   
   void move() {
@@ -44,7 +44,7 @@ class Planet {
       pos = pos.add(force);
       //println(id + " at " + pos);
       line.add(pos.copy());
-      lineSize += 1;
+     
      
   }
   
@@ -91,8 +91,8 @@ class Planet {
        PVector v0, v1;   
        int n = 10000;
        int m = 1;
-       int i = lineSize < n + (m + 1) ? (m + 1) : lineSize - n;
-       for (; i < lineSize; i+=m) {
+       int i = line.size() < n + (m + 1) ? (m + 1) : line.size() - n;
+       for (; i < line.size(); i+=m) {
         v1 = line.get(i);
         v0 = line.get(i-m);
         //point(v1.x, v1.y, v1.z);
